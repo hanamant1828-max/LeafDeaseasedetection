@@ -23,17 +23,17 @@
             </a>
             
             <!-- User info and logout (if logged in) -->
-            {% if request.headers.get('X-Replit-User-Id') %}
+            {% if session.get('user_id') %}
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-2"></i>{{ request.headers.get('X-Replit-User-Name', 'User') }}
+                        <i class="fas fa-user me-2"></i>{{ session.get('username', 'User') }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <span class="dropdown-item-text">
                                 <small class="text-muted">Logged in as</small><br>
-                                <strong>{{ request.headers.get('X-Replit-User-Name', 'User') }}</strong>
+                                <strong>{{ session.get('username', 'User') }}</strong>
                             </span>
                         </li>
                         <li><hr class="dropdown-divider"></li>
@@ -44,6 +44,15 @@
                         </li>
                     </ul>
                 </div>
+            </div>
+            {% else %}
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('login') }}">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+                <a class="nav-link" href="{{ url_for('register') }}">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                </a>
             </div>
             {% endif %}
         </div>

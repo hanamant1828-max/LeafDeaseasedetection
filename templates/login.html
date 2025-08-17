@@ -11,35 +11,63 @@
                 <div class="card-header text-center">
                     <h4 class="mb-0">
                         <i class="fas fa-sign-in-alt me-2"></i>
-                        Login to Plant Disease Detection
+                        Sign In
                     </h4>
                 </div>
                 <div class="card-body">
                     <div class="text-center mb-4">
                         <i class="fas fa-leaf fa-3x text-success mb-3"></i>
                         <p class="text-muted">
-                            Sign in with your Replit account to access the plant disease detection system
+                            Welcome back to Plant Disease Detection System
                         </p>
                     </div>
 
-                    <!-- Login with Replit -->
-                    <div class="text-center">
-                        <script
-                            authed="window.location.href='/'"
-                            src="https://auth.util.repl.co/script.js"
-                        ></script>
-                    </div>
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <div class="mb-3">
+                            <label for="username_or_email" class="form-label">
+                                <i class="fas fa-user me-2"></i>Username or Email
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="username_or_email" 
+                                name="username_or_email" 
+                                required
+                                placeholder="Enter your username or email"
+                                value="{{ request.form.get('username_or_email', '') }}"
+                            >
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                name="password" 
+                                required
+                                placeholder="Enter your password"
+                            >
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                        </div>
+                    </form>
 
                     <hr class="my-4">
 
                     <div class="text-center">
-                        <p class="text-muted mb-2">
-                            <i class="fas fa-shield-alt me-2"></i>
-                            Secure authentication powered by Replit
+                        <p class="mb-0">
+                            Don't have an account? 
+                            <a href="{{ url_for('register') }}" class="text-decoration-none">
+                                <i class="fas fa-user-plus me-1"></i>Create Account
+                            </a>
                         </p>
-                        <small class="text-muted">
-                            Your account information is used only for authentication purposes
-                        </small>
                     </div>
                 </div>
             </div>

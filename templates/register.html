@@ -1,0 +1,163 @@
+
+{% extends "base.html" %}
+
+{% block title %}Register - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Create Account
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                        <p class="text-muted">
+                            Join the Plant Disease Detection System
+                        </p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <div class="mb-3">
+                            <label for="full_name" class="form-label">
+                                <i class="fas fa-user me-2"></i>Full Name
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="full_name" 
+                                name="full_name" 
+                                required
+                                placeholder="Enter your full name"
+                                value="{{ request.form.get('full_name', '') }}"
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-at me-2"></i>Username
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="username" 
+                                name="username" 
+                                required
+                                minlength="3"
+                                placeholder="Choose a username"
+                                value="{{ request.form.get('username', '') }}"
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="email" 
+                                name="email" 
+                                required
+                                placeholder="Enter your email"
+                                value="{{ request.form.get('email', '') }}"
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                name="password" 
+                                required
+                                minlength="6"
+                                placeholder="Create a password"
+                            >
+                            <div class="form-text">Password must be at least 6 characters long.</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Confirm Password
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="confirm_password" 
+                                name="confirm_password" 
+                                required
+                                minlength="6"
+                                placeholder="Confirm your password"
+                            >
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-0">
+                            Already have an account? 
+                            <a href="{{ url_for('login') }}" class="text-decoration-none">
+                                <i class="fas fa-sign-in-alt me-1"></i>Sign In
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Preview -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-star me-2"></i>
+                        What you'll get access to:
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-upload fa-2x text-primary mb-2"></i>
+                            <small class="d-block text-muted">Image Upload</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-brain fa-2x text-warning mb-2"></i>
+                            <small class="d-block text-muted">AI Analysis</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-pills fa-2x text-success mb-2"></i>
+                            <small class="d-block text-muted">Treatment Tips</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Password confirmation validation
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (password !== confirmPassword) {
+        this.setCustomValidity('Passwords do not match');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+{% endblock %}
