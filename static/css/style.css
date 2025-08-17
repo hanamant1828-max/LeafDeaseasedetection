@@ -1,0 +1,156 @@
+/* Custom styles for Plant Disease Detection App */
+
+:root {
+    --plant-green: #28a745;
+    --plant-dark-green: #1e7e34;
+    --plant-light-green: #d4edda;
+    --warning-yellow: #ffc107;
+    --danger-red: #dc3545;
+}
+
+/* Body and layout */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Navigation */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* File input styling */
+.form-control:focus {
+    border-color: var(--plant-green);
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Image preview */
+#imagePreview img {
+    border: 2px solid var(--bs-border-color);
+    transition: border-color 0.3s ease;
+}
+
+#imagePreview img:hover {
+    border-color: var(--plant-green);
+}
+
+/* Buttons */
+.btn-success {
+    background-color: var(--plant-green);
+    border-color: var(--plant-green);
+}
+
+.btn-success:hover {
+    background-color: var(--plant-dark-green);
+    border-color: var(--plant-dark-green);
+}
+
+/* Disease result styling */
+.disease-result {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Progress bars */
+.progress {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Loading state */
+#loadingState {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    #previewImage {
+        max-height: 200px !important;
+    }
+}
+
+/* Icon animations */
+.fa-spin-custom {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Alert improvements */
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+/* Footer */
+footer {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}
+
+/* Form validation states */
+.is-invalid {
+    border-color: var(--danger-red) !important;
+}
+
+.is-valid {
+    border-color: var(--plant-green) !important;
+}
+
+/* Utility classes */
+.text-plant-green {
+    color: var(--plant-green) !important;
+}
+
+.bg-plant-green {
+    background-color: var(--plant-green) !important;
+}
+
+.opacity-50 {
+    opacity: 0.5 !important;
+}

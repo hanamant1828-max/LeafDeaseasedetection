@@ -1,0 +1,2 @@
+# This file ensures the uploads directory is created and maintained in version control
+# The directory is needed for file uploads but should not contain actual uploaded files in the repository
