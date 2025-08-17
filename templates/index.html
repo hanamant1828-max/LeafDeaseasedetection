@@ -49,98 +49,66 @@
                         </div>
 
                         <button type="submit" class="btn btn-success w-100" id="submitBtn">
-                            <i class="fas fa-brain me-2"></i>
-                            Analyze Plant Disease
+                            <i class="fas fa-upload me-2"></i>
+                            Upload Image (Demo)
                         </button>
                     </form>
 
                     <!-- Loading State -->
                     <div id="loadingState" class="text-center mt-3" style="display: none;">
                         <div class="spinner-border text-success" role="status">
-                            <span class="visually-hidden">Analyzing...</span>
+                            <span class="visually-hidden">Uploading...</span>
                         </div>
                         <p class="text-muted mt-2 mb-0">
-                            <i class="fas fa-cog fa-spin me-2"></i>
-                            Analyzing image with ML algorithms...
+                            <i class="fas fa-upload fa-spin me-2"></i>
+                            Uploading image for demo...
                         </p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Results Section -->
+        <!-- Information Section -->
         <div class="col-lg-6 mb-4">
             <div class="card h-100">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="fas fa-chart-line me-2"></i>
-                        Analysis Results
+                        <i class="fas fa-info-circle me-2"></i>
+                        About This Project
                     </h5>
                 </div>
                 <div class="card-body">
-                    {% if prediction and success %}
-                        <!-- Disease Detection Results -->
-                        <div class="disease-result">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="me-3">
-                                    {% if prediction.name == 'Healthy' %}
-                                        <i class="fas fa-check-circle text-success fa-2x"></i>
-                                    {% elif prediction.severity == 'Mild' %}
-                                        <i class="fas fa-exclamation-triangle text-warning fa-2x"></i>
-                                    {% else %}
-                                        <i class="fas fa-exclamation-circle text-danger fa-2x"></i>
-                                    {% endif %}
-                                </div>
-                                <div>
-                                    <h4 class="mb-1">{{ prediction.name }}</h4>
-                                    <span class="badge {% if prediction.name == 'Healthy' %}bg-success{% elif prediction.severity == 'Mild' %}bg-warning{% else %}bg-danger{% endif %}">
-                                        {{ prediction.severity }}
-                                    </span>
-                                </div>
-                            </div>
+                    <div class="text-center mb-4">
+                        <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                        <h5>Plant Disease Detection System</h5>
+                        <p class="text-muted">A machine learning powered application for identifying plant diseases</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6><i class="fas fa-brain me-2"></i>Machine Learning Features</h6>
+                        <ul class="text-muted">
+                            <li>Image classification algorithms</li>
+                            <li>Disease identification and severity assessment</li>
+                            <li>Treatment recommendations</li>
+                            <li>Prevention strategies</li>
+                        </ul>
+                    </div>
 
-                            <!-- Confidence Score -->
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <small class="text-muted">Confidence Score</small>
-                                    <small class="text-muted">{{ "%.1f"|format(prediction.confidence * 100) }}%</small>
-                                </div>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar {% if prediction.confidence > 0.8 %}bg-success{% elif prediction.confidence > 0.6 %}bg-warning{% else %}bg-danger{% endif %}" 
-                                         role="progressbar" 
-                                         style="width: {{ prediction.confidence * 100 }}%">
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="mb-3">
+                        <h6><i class="fas fa-leaf me-2"></i>Supported Plants</h6>
+                        <p class="text-muted">The system can analyze various plant diseases including:</p>
+                        <ul class="text-muted">
+                            <li>Tomato diseases (Early Blight, Late Blight)</li>
+                            <li>Potato diseases</li>
+                            <li>Pepper diseases (Bacterial Spot)</li>
+                            <li>Common fungal infections (Powdery Mildew)</li>
+                        </ul>
+                    </div>
 
-                            <!-- Description -->
-                            <div class="mb-3">
-                                <h6><i class="fas fa-info-circle me-2"></i>Description</h6>
-                                <p class="text-muted">{{ prediction.description }}</p>
-                            </div>
-
-                            <!-- Treatment -->
-                            {% if prediction.name != 'Healthy' %}
-                            <div class="mb-3">
-                                <h6><i class="fas fa-prescription-bottle-alt me-2"></i>Treatment</h6>
-                                <p class="text-muted">{{ prediction.treatment }}</p>
-                            </div>
-                            {% endif %}
-
-                            <!-- Prevention -->
-                            <div class="mb-3">
-                                <h6><i class="fas fa-shield-alt me-2"></i>Prevention</h6>
-                                <p class="text-muted">{{ prediction.prevention }}</p>
-                            </div>
-                        </div>
-                    {% else %}
-                        <!-- Default State -->
-                        <div class="text-center text-muted">
-                            <i class="fas fa-leaf fa-3x mb-3 opacity-50"></i>
-                            <p class="mb-0">Upload a plant leaf image to begin analysis</p>
-                            <small>Results will appear here after processing</small>
-                        </div>
-                    {% endif %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Development Status:</strong> This is a frontend demonstration. The machine learning model integration is planned for future development.
+                    </div>
                 </div>
             </div>
         </div>

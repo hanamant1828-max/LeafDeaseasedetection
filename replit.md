@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Flask-based web application that provides plant disease detection capabilities through image analysis. The system allows users to upload plant images and receive AI-powered disease identification with treatment recommendations. Built with a modern, responsive interface using Bootstrap and designed for easy deployment and maintenance.
+A Flask-based web application demonstrating a plant disease detection system frontend. The application provides a complete user interface for uploading plant images with a modern, responsive design using Bootstrap. Currently serves as a frontend demonstration with machine learning integration planned for future development.
 
 ## User Preferences
 
@@ -26,8 +26,8 @@ Preferred communication style: Simple, everyday language.
 - **Mock Data Layer**: In-memory disease database for demonstration purposes
 
 ### Data Storage Solutions
-- **File Storage**: Local filesystem storage in uploads directory
-- **Disease Database**: Currently uses mock data stored in Python dictionaries
+- **File Storage**: Local filesystem storage in uploads directory (demo only - files not permanently stored)
+- **Disease Database**: Removed for frontend-only demonstration
 - **Session Storage**: Flask's built-in session handling
 - **Static Assets**: Standard Flask static file serving
 
