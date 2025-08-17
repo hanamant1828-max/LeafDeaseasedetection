@@ -30,11 +30,42 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     """Main page with upload form."""
-    return render_template('index.html')
+    # Check if user is authenticated
+    user_id = request.headers.get('X-Replit-User-Id')
+    user_name = request.headers.get('X-Replit-User-Name')
+    
+    if not user_id:
+        # Redirect to login if not authenticated
+        return redirect(url_for('login'))
+    
+    return render_template('index.html', user_name=user_name, user_id=user_id)
+
+@app.route('/login')
+def login():
+    """Login page."""
+    # Check if user is already authenticated
+    user_id = request.headers.get('X-Replit-User-Id')
+    if user_id:
+        # Redirect to main page if already logged in
+        return redirect(url_for('index'))
+    
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    """Logout route - redirects to login page."""
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('login'))
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """Handle file upload - frontend demo only."""
+    # Check if user is authenticated
+    user_id = request.headers.get('X-Replit-User-Id')
+    if not user_id:
+        flash('Please log in to upload files.', 'error')
+        return redirect(url_for('login'))
+    
     if 'file' not in request.files:
         flash('No file selected', 'error')
         return redirect(url_for('index'))

@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+
+{% block title %}Login - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Login to Plant Disease Detection
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                        <p class="text-muted">
+                            Sign in with your Replit account to access the plant disease detection system
+                        </p>
+                    </div>
+
+                    <!-- Login with Replit -->
+                    <div class="text-center">
+                        <script
+                            authed="window.location.href='/'"
+                            src="https://auth.util.repl.co/script.js"
+                        ></script>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Secure authentication powered by Replit
+                        </p>
+                        <small class="text-muted">
+                            Your account information is used only for authentication purposes
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Preview -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="text-center mb-3">
+                        <i class="fas fa-star me-2"></i>
+                        What you'll get access to:
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <i class="fas fa-upload fa-2x text-primary mb-2"></i>
+                            <small class="d-block text-muted">Image Upload</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-brain fa-2x text-warning mb-2"></i>
+                            <small class="d-block text-muted">AI Analysis</small>
+                        </div>
+                        <div class="col-4">
+                            <i class="fas fa-pills fa-2x text-success mb-2"></i>
+                            <small class="d-block text-muted">Treatment Tips</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

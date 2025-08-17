@@ -21,6 +21,31 @@
             <a class="navbar-brand" href="{{ url_for('index') }}">
                 <i class="fas fa-leaf me-2"></i>Plant Disease Detection
             </a>
+            
+            <!-- User info and logout (if logged in) -->
+            {% if request.headers.get('X-Replit-User-Id') %}
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-2"></i>{{ request.headers.get('X-Replit-User-Name', 'User') }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <span class="dropdown-item-text">
+                                <small class="text-muted">Logged in as</small><br>
+                                <strong>{{ request.headers.get('X-Replit-User-Name', 'User') }}</strong>
+                            </span>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </nav>
 
