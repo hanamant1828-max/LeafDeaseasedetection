@@ -30,9 +30,22 @@ db.init_app(app)
 # Ensure upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Create database tables
+# Create database tables and add default user
 with app.app_context():
     db.create_all()
+    
+    # Create default demo user if it doesn't exist
+    demo_user = User.query.filter_by(username='demo').first()
+    if not demo_user:
+        demo_user = User(
+            username='demo',
+            email='demo@example.com',
+            full_name='Demo User'
+        )
+        demo_user.set_password('demo123')
+        db.session.add(demo_user)
+        db.session.commit()
+        app.logger.info('Default demo user created: username=demo, password=demo123')
 
 def allowed_file(filename):
     """Check if file extension is allowed."""
