@@ -93,9 +93,50 @@ Preferred communication style: Simple, everyday language.
 - **Directory Structure**: Automatic uploads directory creation
 - **Default Demo Account**: username=demo, password=demo123 (created automatically)
 
+## Training Data
+
+### Training Dataset Structure
+The system includes a comprehensive training dataset for potential model improvements:
+
+- **Location**: `training_data/` directory
+- **Healthy Images**: 500 augmented images in `training_data/healthy/`
+- **Diseased Images**: 500 augmented images in `training_data/diseased/`
+- **Total Images**: 1,000 training samples
+
+### Data Generation Method
+Training images were generated using advanced image augmentation techniques from a seed set of test images:
+- **Source**: 3 healthy leaf images + 5 diseased leaf images from `test_images/`
+- **Augmentation Techniques Applied**:
+  - Random rotation (-30° to +30°)
+  - Random horizontal and vertical flips
+  - Random brightness adjustment (0.7x to 1.3x)
+  - Random contrast adjustment (0.8x to 1.2x)
+  - Random Gaussian blur (radius 0 to 1.5)
+  - Random crop and resize (80% to 95% of original)
+- **Script**: `generate_training_data.py` - reusable for regenerating or expanding dataset
+- **Quality**: All images saved as high-quality JPEG (quality=95)
+
+### Dataset Usage
+This training dataset can be used for:
+- Training machine learning models for disease classification
+- Improving the current rule-based detection algorithm
+- Testing and validation of new analysis approaches
+- Benchmarking model performance
+
+Note: The current disease detection system uses a rule-based computer vision approach (color analysis, spot detection, texture analysis) and does not require this training data to function. The dataset is provided for future ML model development.
+
 ## Recent Changes (October 31, 2025)
 
-### Complete System Implementation
+### Bug Fixes and Improvements
+- Fixed browser caching issue: Added cache-control headers to prevent stale disease detection results
+- Users can now upload different images and see correct, updated results each time
+
+### Training Data Generation
+- Generated 1,000 training images (500 healthy, 500 diseased) using image augmentation
+- Created `generate_training_data.py` for reproducible dataset generation
+- Organized training data in `training_data/healthy/` and `training_data/diseased/` directories
+
+### Complete System Implementation (Previous)
 - Implemented full database models for User and Analysis with proper relationships
 - Created real image analysis engine (`analysis.py`) using NumPy and PIL
 - Integrated disease detection with 7 disease types and comprehensive disease database
