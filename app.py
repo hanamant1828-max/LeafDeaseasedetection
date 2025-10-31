@@ -36,6 +36,16 @@ db.init_app(app)
 # Ensure upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Add cache control headers to prevent caching issues
+@app.after_request
+def add_header(response):
+    """Add headers to prevent caching of dynamic content."""
+    if response.content_type and 'text/html' in response.content_type:
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
 # Create database tables and add default user
 with app.app_context():
     db.create_all()
