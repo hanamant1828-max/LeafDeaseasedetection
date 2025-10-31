@@ -63,15 +63,18 @@ class DiseaseAnalyzer:
         g = pixels[:, :, 1].flatten()
         b = pixels[:, :, 2].flatten()
         
-        green_mask = (g > r) & (g > b) & (g > 80)
+        # Improved green detection - more inclusive
+        green_mask = (g > r) & (g > b) & (g > 50)
         green_pixels = np.sum(green_mask)
         green_percentage = (green_pixels / total_pixels) * 100
         
-        brown_mask = ((r > 100) & (r < 200) & (g > 50) & (g < 150) & (b < 100))
+        # Improved brown detection - catches disease discoloration better
+        brown_mask = ((r > 80) & (r < 220) & (g > 40) & (g < 180) & (b < 120) & (r > b))
         brown_pixels = np.sum(brown_mask)
         brown_percentage = (brown_pixels / total_pixels) * 100
         
-        yellow_mask = ((r > 150) & (g > 150) & (b < 100))
+        # Improved yellow detection - catches chlorosis
+        yellow_mask = ((r > 120) & (g > 120) & (b < 120) & (r > b) & (g > b))
         yellow_pixels = np.sum(yellow_mask)
         yellow_percentage = (yellow_pixels / total_pixels) * 100
         
@@ -88,14 +91,15 @@ class DiseaseAnalyzer:
         img_gray = img.convert('L')
         pixels = np.array(img_gray)
         
-        threshold = np.mean(pixels) - np.std(pixels)
+        # More sensitive spot detection
+        threshold = np.mean(pixels) - (np.std(pixels) * 0.8)
         dark_spots = pixels < threshold
         
         spot_count = np.sum(dark_spots) / pixels.size * 100
         
         return {
             'spot_count': round(spot_count, 2),
-            'has_significant_spots': spot_count > 5
+            'has_significant_spots': spot_count > 8
         }
     
     def _analyze_texture(self, img):
@@ -114,18 +118,44 @@ class DiseaseAnalyzer:
         green_content = color_analysis['green_percentage']
         spot_count = spot_analysis['spot_count']
         
-        # Simple binary classification: Healthy or Diseased
-        # Healthy: high green content, low brown/yellow, minimal spots
-        if health_score > 20 and green_content > 30 and brown_content < 6 and spot_count < 3:
-            return 'healthy', random.uniform(85, 95), 'None'
+        # Calculate disease indicators
+        discoloration_score = brown_content + (yellow_content * 0.7)
         
-        # Diseased: any signs of disease
+        # More lenient and accurate classification
+        # Healthy criteria: predominantly green with minimal disease signs
+        is_healthy = (
+            green_content > 15 and  # More lenient green threshold
+            discoloration_score < 15 and  # Combined discoloration threshold
+            spot_count < 8 and  # More tolerant of minor spots
+            health_score > 0  # Overall positive health score
+        )
+        
+        if is_healthy:
+            # Calculate confidence based on how strongly healthy it appears
+            confidence_base = min(95, 75 + (green_content / 2))
+            confidence_penalty = (brown_content + yellow_content + spot_count) * 0.5
+            confidence = max(70, confidence_base - confidence_penalty)
+            return 'healthy', confidence, 'None'
+        
+        # Diseased classification
         else:
-            confidence = random.uniform(70, 90)
-            # Determine severity based on symptoms
-            if brown_content > 12 or spot_count > 7:
+            # Calculate confidence based on disease indicators
+            confidence_base = 70
+            if discoloration_score > 20:
+                confidence_base += 10
+            if spot_count > 10:
+                confidence_base += 5
+            if green_content < 10:
+                confidence_base += 10
+            
+            confidence = min(95, confidence_base)
+            
+            # Determine severity based on multiple factors
+            severity_score = (brown_content * 1.5) + yellow_content + (spot_count * 0.8)
+            
+            if severity_score > 30 or green_content < 8:
                 severity = 'High'
-            elif brown_content >= 7 or spot_count >= 4 or yellow_content > 12:
+            elif severity_score > 15 or brown_content > 10:
                 severity = 'Medium'
             else:
                 severity = 'Low'
