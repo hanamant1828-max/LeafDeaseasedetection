@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Result - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary mb-3">
+                <i class="fas fa-arrow-left me-2"></i>Back to Upload
+            </a>
+            <h1 class="display-5">
+                <i class="fas fa-microscope text-success me-3"></i>
+                Analysis Result
+            </h1>
+            <p class="text-muted">
+                Analyzed on {{ analysis.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Image Display -->
+        <div class="col-lg-5 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-image me-2"></i>
+                        Uploaded Image
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{{ url_for('static', filename='../uploads/' + analysis.image_filename) }}" 
+                         alt="Plant Image" 
+                         class="img-fluid rounded shadow"
+                         style="max-height: 400px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Results -->
+        <div class="col-lg-7 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Detection Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Disease Name -->
+                    <div class="mb-4">
+                        <h3 class="mb-2">
+                            {% if 'Healthy' in analysis.disease_detected %}
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                            {% else %}
+                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            {% endif %}
+                            {{ analysis.disease_detected }}
+                        </h3>
+                    </div>
+
+                    <!-- Confidence and Severity -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-primary bg-opacity-10">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">
+                                        <i class="fas fa-percentage me-1"></i>
+                                        Confidence Score
+                                    </h6>
+                                    <h2 class="mb-0">{{ "%.1f"|format(analysis.confidence) }}%</h2>
+                                    <div class="progress mt-2" style="height: 8px;">
+                                        <div class="progress-bar bg-primary" 
+                                             role="progressbar" 
+                                             style="width: {{ analysis.confidence }}%"
+                                             aria-valuenow="{{ analysis.confidence }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card 
+                                {% if analysis.severity == 'High' %}bg-danger bg-opacity-10
+                                {% elif analysis.severity == 'Medium' %}bg-warning bg-opacity-10
+                                {% elif analysis.severity == 'Low' %}bg-info bg-opacity-10
+                                {% else %}bg-success bg-opacity-10{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">
+                                        <i class="fas fa-thermometer-half me-1"></i>
+                                        Severity Level
+                                    </h6>
+                                    <h2 class="mb-0
+                                        {% if analysis.severity == 'High' %}text-danger
+                                        {% elif analysis.severity == 'Medium' %}text-warning
+                                        {% elif analysis.severity == 'Low' %}text-info
+                                        {% else %}text-success{% endif %}">
+                                        {% if analysis.severity == 'None' %}Healthy{% else %}{{ analysis.severity }}{% endif %}
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <h5><i class="fas fa-info-circle me-2"></i>Description</h5>
+                        <p class="text-muted">{{ analysis.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Treatment and Prevention -->
+    <div class="row mt-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success bg-opacity-10">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-pills me-2 text-success"></i>
+                        Treatment Recommendations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ analysis.treatment }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info bg-opacity-10">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-shield-alt me-2 text-info"></i>
+                        Prevention Strategies
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ analysis.prevention }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="fas fa-upload me-2"></i>Analyze Another Image
+                </a>
+                <a href="{{ url_for('history') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-history me-2"></i>View History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

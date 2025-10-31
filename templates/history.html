@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis History - Plant Disease Detection{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5">
+                <i class="fas fa-history text-success me-3"></i>
+                Analysis History
+            </h1>
+            <p class="text-muted">View all your previous plant disease analyses</p>
+        </div>
+    </div>
+
+    {% if analyses %}
+    <div class="row">
+        {% for analysis in analyses %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Image Thumbnail -->
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <img src="{{ url_for('static', filename='../uploads/' + analysis.image_filename) }}" 
+                                 alt="Plant" 
+                                 class="img-fluid rounded"
+                                 style="max-height: 150px; object-fit: cover; width: 100%;">
+                        </div>
+                        <!-- Analysis Info -->
+                        <div class="col-md-8">
+                            <h5 class="card-title">
+                                {% if 'Healthy' in analysis.disease_detected %}
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                {% endif %}
+                                {{ analysis.disease_detected }}
+                            </h5>
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ analysis.created_at.strftime('%b %d, %Y at %I:%M %p') }}
+                                </small>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Confidence</small>
+                                    <strong>{{ "%.1f"|format(analysis.confidence) }}%</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Severity</small>
+                                    <strong class="
+                                        {% if analysis.severity == 'High' %}text-danger
+                                        {% elif analysis.severity == 'Medium' %}text-warning
+                                        {% elif analysis.severity == 'Low' %}text-info
+                                        {% else %}text-success{% endif %}">
+                                        {% if analysis.severity == 'None' %}Healthy{% else %}{{ analysis.severity }}{% endif %}
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <a href="{{ url_for('view_result', analysis_id=analysis.id) }}" 
+                               class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-inbox fa-4x text-muted mb-3"></i>
+                    <h4>No Analysis History</h4>
+                    <p class="text-muted mb-4">You haven't analyzed any plant images yet.</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Upload Your First Image
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Summary Stats (if analyses exist) -->
+    {% if analyses %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">
+                <i class="fas fa-chart-bar me-2"></i>
+                Summary Statistics
+            </h3>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-primary bg-opacity-10">
+                <div class="card-body text-center">
+                    <i class="fas fa-microscope fa-2x text-primary mb-2"></i>
+                    <h2 class="mb-0">{{ analyses|length }}</h2>
+                    <p class="text-muted mb-0">Total Analyses</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-success bg-opacity-10">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                    <h2 class="mb-0">{{ analyses|selectattr('disease_detected', 'search', 'Healthy')|list|length }}</h2>
+                    <p class="text-muted mb-0">Healthy Plants</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card bg-warning bg-opacity-10">
+                <div class="card-body text-center">
+                    <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                    <h2 class="mb-0">{{ analyses|rejectattr('disease_detected', 'search', 'Healthy')|list|length }}</h2>
+                    <p class="text-muted mb-0">Diseases Detected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

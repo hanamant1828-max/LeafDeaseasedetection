@@ -1,9 +1,12 @@
 
 import os
 import logging
+from datetime import datetime
+from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from models import db, User
+from models import db, User, Analysis
 from email_validator import validate_email, EmailNotValidError
+from analysis import DiseaseAnalyzer
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -177,7 +180,7 @@ def logout():
 @app.route('/upload', methods=['POST'])
 @login_required
 def upload_file():
-    """Handle file upload - frontend demo only."""
+    """Handle file upload and perform disease analysis."""
     if 'file' not in request.files:
         flash('No file selected', 'error')
         return redirect(url_for('index'))
@@ -192,9 +195,59 @@ def upload_file():
         flash('Invalid file type. Please upload an image file (PNG, JPG, JPEG, GIF, BMP, WEBP)', 'error')
         return redirect(url_for('index'))
     
-    # Just show success message - no actual analysis
-    flash('Image uploaded successfully! Disease analysis feature will be implemented with machine learning models.', 'success')
-    return redirect(url_for('index'))
+    try:
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        unique_filename = f"{timestamp}_{filename}"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        
+        file.save(filepath)
+        
+        analyzer = DiseaseAnalyzer()
+        result = analyzer.analyze_image(filepath)
+        
+        analysis = Analysis(
+            user_id=session['user_id'],
+            image_filename=unique_filename,
+            disease_detected=result['disease_name'],
+            confidence=result['confidence'],
+            severity=result['severity'],
+            description=result['description'],
+            treatment=result['treatment'],
+            prevention=result['prevention']
+        )
+        
+        db.session.add(analysis)
+        db.session.commit()
+        
+        flash('Image analyzed successfully!', 'success')
+        return redirect(url_for('view_result', analysis_id=analysis.id))
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Analysis error: {e}")
+        flash('An error occurred during analysis. Please try again.', 'error')
+        return redirect(url_for('index'))
+
+@app.route('/result/<int:analysis_id>')
+@login_required
+def view_result(analysis_id):
+    """View analysis result."""
+    analysis = Analysis.query.get_or_404(analysis_id)
+    
+    if analysis.user_id != session['user_id']:
+        flash('You do not have permission to view this analysis.', 'error')
+        return redirect(url_for('index'))
+    
+    return render_template('result.html', analysis=analysis)
+
+@app.route('/history')
+@login_required
+def history():
+    """View analysis history."""
+    user = User.query.get(session['user_id'])
+    analyses = Analysis.query.filter_by(user_id=session['user_id']).order_by(Analysis.created_at.desc()).all()
+    return render_template('history.html', user=user, analyses=analyses)
 
 @app.errorhandler(413)
 def too_large(e):
