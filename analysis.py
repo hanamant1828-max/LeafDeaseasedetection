@@ -84,11 +84,81 @@ class DiseaseAnalyzer:
             logger.error(f"Image analysis failed: {e}")
             raise Exception(f"Image analysis failed: {str(e)}")
     
+    def _preprocess_for_leaves(self, img):
+        """
+        Preprocess image to focus on leaf regions.
+        Handles both close-up leaves and full plant images.
+        """
+        from PIL import ImageEnhance
+        
+        # Convert to numpy array
+        img_array = np.array(img)
+        original_img = img  # Keep original for fallback
+        
+        # Check if this is a full plant image (lots of background)
+        if len(img_array.shape) == 3:
+            r = img_array[:, :, 0]
+            g = img_array[:, :, 1]
+            b = img_array[:, :, 2]
+            
+            # Identify green pixels (leaves)
+            green_mask = (g > r) & (g > b) & (g > 50)
+            green_percentage = (np.sum(green_mask) / green_mask.size) * 100
+            
+            # If less than 70% green, this is likely a full plant photo
+            # Focus on the green regions
+            if green_percentage < 70 and green_percentage > 10:  # Added lower bound check
+                logger.info(f"Full plant image detected ({green_percentage:.1f}% green). Focusing on leaves...")
+                
+                # Find bounding box of green regions
+                coords = np.argwhere(green_mask)
+                if len(coords) > 0:
+                    y_min, x_min = coords.min(axis=0)
+                    y_max, x_max = coords.max(axis=0)
+                    
+                    # Add some padding (10%)
+                    height, width = green_mask.shape
+                    padding_y = int((y_max - y_min) * 0.1)
+                    padding_x = int((x_max - x_min) * 0.1)
+                    
+                    y_min = max(0, y_min - padding_y)
+                    y_max = min(height, y_max + padding_y)
+                    x_min = max(0, x_min - padding_x)
+                    x_max = min(width, x_max + padding_x)
+                    
+                    # Calculate crop area percentage
+                    crop_area = (x_max - x_min) * (y_max - y_min)
+                    total_area = width * height
+                    crop_percentage = (crop_area / total_area) * 100
+                    
+                    # Safety check: only crop if it's meaningful (not just the whole image)
+                    if crop_percentage < 80:
+                        img = img.crop((x_min, y_min, x_max, y_max))
+                        logger.info(f"Cropped to leaf region: {x_max-x_min}x{y_max-y_min} ({crop_percentage:.1f}% of image)")
+                    else:
+                        logger.info(f"Crop area too large ({crop_percentage:.1f}%), using original image")
+                        img = original_img
+            elif green_percentage <= 10:
+                logger.info(f"Very low green content ({green_percentage:.1f}%), using original image")
+                img = original_img
+            else:
+                logger.info(f"Close-up leaf image detected ({green_percentage:.1f}% green)")
+        
+        # Enhance contrast to make disease signs more visible
+        enhancer = ImageEnhance.Contrast(img)
+        img = enhancer.enhance(1.2)
+        
+        return img
+    
     def _ml_predict(self, img):
         try:
             import tensorflow as tf
             
-            img_resized = img.resize((224, 224))
+            # Preprocess to focus on leaves
+            img_processed = self._preprocess_for_leaves(img)
+            
+            # Resize for model input
+            img_resized = img_processed.resize((224, 224))
             img_array = np.array(img_resized) / 255.0
             img_array = np.expand_dims(img_array, axis=0)
             
