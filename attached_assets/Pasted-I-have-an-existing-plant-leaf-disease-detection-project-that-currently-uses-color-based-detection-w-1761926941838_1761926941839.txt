@@ -1,0 +1,63 @@
+I have an existing plant leaf disease detection project that currently uses color-based detection, which is inaccurate. I need to upgrade it to use deep learning CNN model for better accuracy.
+
+CURRENT SITUATION:
+- Existing Flask web application
+- Color-based disease detection (needs to be replaced)
+- Basic UI already present
+
+UPGRADE REQUIREMENTS:
+
+1. REPLACE COLOR-BASED DETECTION WITH CNN MODEL:
+   - Remove all color-based detection logic
+   - Implement MobileNetV2 or VGG16 with transfer learning
+   - Use TensorFlow/Keras for model training and prediction
+   - Target accuracy: 90%+ (vs current color-based ~60-70%)
+
+2. MODEL IMPLEMENTATION:
+   - Create new file: model/train_model.py for training
+   - Create new file: model/predict.py for inference
+   - Use pre-trained MobileNetV2 on ImageNet
+   - Fine-tune on Plant Village dataset
+   - Save trained model as model/plant_disease_model.h5
+   - Save class labels as model/class_labels.txt
+
+3. TRAINING SPECIFICATIONS:
+   - Dataset: Plant Village (download via Kaggle API or TensorFlow datasets)
+   - Diseases to detect (minimum 10 classes):
+     * Tomato: Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot
+     * Potato: Early Blight, Late Blight
+     * Pepper: Bacterial Spot
+     * Apple: Cedar Rust, Black Rot
+     * Healthy class
+   - Image preprocessing:
+     * Resize to 224x224
+     * Normalize pixel values (0-1)
+     * Data augmentation (rotation, flip, brightness)
+   - Training parameters:
+     * Batch size: 32
+     * Epochs: 20-30
+     * Optimizer: Adam
+     * Loss: Categorical Crossentropy
+     * Validation split: 20%
+
+4. UPDATE PREDICTION LOGIC:
+   Replace existing color-based detection function with:
+   - Load trained model on app startup
+   - Preprocess uploaded image (resize, normalize)
+   - Run CNN prediction
+   - Return top prediction with confidence score
+   - Return top 3 predictions with probabilities
+
+5. MAINTAIN EXISTING FEATURES:
+   - Keep current UI design
+   - Keep image upload functionality
+   - Keep result display format
+   - Update only the detection logic
+
+6. NEW FEATURES TO ADD:
+   - Display confidence percentage (e.g., "95.5% confident")
+   - Show top 3 possible diseases with probabilities
+   - Add "Model Accuracy: 92%" badge on UI
+   - Include disease severity indicator (mild/moderate/severe based on confidence)
+
+7. FILE STRUCTURE (update existing):
