@@ -88,7 +88,7 @@ class DiseaseAnalyzer:
         try:
             import tensorflow as tf
             
-            img_resized = img.resize((128, 128))
+            img_resized = img.resize((224, 224))
             img_array = np.array(img_resized) / 255.0
             img_array = np.expand_dims(img_array, axis=0)
             
