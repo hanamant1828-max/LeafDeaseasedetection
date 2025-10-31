@@ -23,7 +23,7 @@
                     <div class="row">
                         <!-- Image Thumbnail -->
                         <div class="col-md-4 mb-3 mb-md-0">
-                            <img src="{{ url_for('static', filename='../uploads/' + analysis.image_filename) }}" 
+                            <img src="{{ url_for('uploaded_file', filename=analysis.image_filename) }}" 
                                  alt="Plant" 
                                  class="img-fluid rounded"
                                  style="max-height: 150px; object-fit: cover; width: 100%;">

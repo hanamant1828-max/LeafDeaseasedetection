@@ -13,7 +13,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Create Flask app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
+app.secret_key = os.environ.get("SESSION_SECRET")
+
+if not app.secret_key:
+    raise ValueError("SESSION_SECRET environment variable must be set")
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///plant_disease.db')
@@ -248,6 +251,13 @@ def history():
     user = User.query.get(session['user_id'])
     analyses = Analysis.query.filter_by(user_id=session['user_id']).order_by(Analysis.created_at.desc()).all()
     return render_template('history.html', user=user, analyses=analyses)
+
+@app.route('/uploads/<filename>')
+@login_required
+def uploaded_file(filename):
+    """Serve uploaded files."""
+    from flask import send_from_directory
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.errorhandler(413)
 def too_large(e):
