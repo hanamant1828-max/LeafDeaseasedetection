@@ -13,6 +13,7 @@ class User(db.Model):
     full_name = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
+    analyses = db.relationship('Analysis', backref='user', lazy=True, cascade='all, delete-orphan')
 
     def set_password(self, password):
         """Set password hash"""
@@ -24,3 +25,19 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+class Analysis(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    image_filename = db.Column(db.String(255), nullable=False)
+    disease_detected = db.Column(db.String(100), nullable=False)
+    confidence = db.Column(db.Float, nullable=False)
+    severity = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    treatment = db.Column(db.Text, nullable=False)
+    prevention = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Analysis {self.id}: {self.disease_detected}>'
