@@ -1,0 +1,13 @@
+CLASS MAPPING FOR MODEL:
+==================================================
+diseased = 0
+healthy = 1
+
+PREDICTION INTERPRETATION:
+==================================================
+Model output close to 0 = diseased
+Model output close to 1 = healthy
+
+CODE LOGIC:
+if prediction > 0.5: disease = 'healthy'
+else: disease = 'diseased'
