@@ -40,6 +40,10 @@ externalPort = 80
 localPort = 34363
 externalPort = 3000
 
+[[ports]]
+localPort = 39605
+externalPort = 3001
+
 [agent]
 integrations = ["styling_replit==1.0.0"]
 expertMode = true
