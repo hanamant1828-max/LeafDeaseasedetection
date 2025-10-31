@@ -135,7 +135,7 @@ class DiseaseAnalyzer:
             confidence_base = min(95, 75 + (green_content / 2))
             confidence_penalty = (brown_content + yellow_content + spot_count) * 0.5
             confidence = max(70, confidence_base - confidence_penalty)
-            return 'healthy', confidence, 'None'
+            return 'healthy', float(confidence), 'None'
         
         # Diseased classification
         else:
@@ -160,4 +160,4 @@ class DiseaseAnalyzer:
             else:
                 severity = 'Low'
             
-            return 'diseased', confidence, severity
+            return 'diseased', float(confidence), severity
