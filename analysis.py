@@ -94,17 +94,19 @@ class DiseaseAnalyzer:
             
             prediction = self.model.predict(img_array, verbose=0)[0][0]
             
-            if prediction > 0.5:
+            # Model output: 0 = diseased, 1 = healthy (based on folder ordering)
+            # But we need to check if the labels are inverted
+            if prediction < 0.5:
                 disease = 'healthy'
-                confidence = float(prediction * 100)
+                confidence = float((1 - prediction) * 100)
                 severity = 'None'
             else:
                 disease = 'diseased'
-                confidence = float((1 - prediction) * 100)
+                confidence = float(prediction * 100)
                 
-                if prediction < 0.2:
+                if prediction > 0.8:
                     severity = 'High'
-                elif prediction < 0.35:
+                elif prediction > 0.65:
                     severity = 'Medium'
                 else:
                     severity = 'Low'
