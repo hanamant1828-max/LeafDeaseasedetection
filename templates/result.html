@@ -48,15 +48,16 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <!-- Disease Name -->
+                    <!-- Disease Status -->
                     <div class="mb-4">
                         <h3 class="mb-2">
-                            {% if 'Healthy' in analysis.disease_detected %}
+                            {% if analysis.disease_detected == 'Healthy Plant' %}
                                 <i class="fas fa-check-circle text-success me-2"></i>
+                                <span class="text-success">HEALTHY</span>
                             {% else %}
-                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                <span class="text-danger">DISEASED</span>
                             {% endif %}
-                            {{ analysis.disease_detected }}
                         </h3>
                     </div>
 

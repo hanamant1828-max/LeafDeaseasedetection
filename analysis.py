@@ -12,41 +12,11 @@ class DiseaseAnalyzer:
             'treatment': 'No treatment needed. Continue regular care routine.',
             'prevention': 'Maintain proper watering schedule, ensure adequate sunlight, use balanced fertilizer, and monitor regularly for early signs of disease.'
         },
-        'early_blight': {
-            'name': 'Early Blight',
-            'description': 'Early blight is a fungal disease caused by Alternaria solani. It appears as dark brown spots with concentric rings (target-like pattern) on lower leaves first.',
-            'treatment': 'Remove affected leaves immediately. Apply copper-based fungicide or organic neem oil spray. Improve air circulation around plants.',
-            'prevention': 'Practice crop rotation, avoid overhead watering, mulch around plants, remove plant debris, and ensure proper spacing between plants.'
-        },
-        'late_blight': {
-            'name': 'Late Blight',
-            'description': 'Late blight is a serious disease caused by Phytophthora infestans. Characterized by large, irregular dark brown or black spots with a water-soaked appearance.',
-            'treatment': 'Remove and destroy infected plants immediately. Apply fungicide containing chlorothalonil or copper. Avoid watering in the evening.',
-            'prevention': 'Use resistant varieties, ensure good drainage, provide adequate spacing, remove infected plant material, and apply preventive fungicides in humid conditions.'
-        },
-        'powdery_mildew': {
-            'name': 'Powdery Mildew',
-            'description': 'A fungal disease that appears as white or gray powdery spots on leaves and stems. Can affect plant growth and reduce yield if left untreated.',
-            'treatment': 'Spray with fungicide, neem oil, or a baking soda solution (1 tbsp per gallon of water). Remove severely affected leaves.',
-            'prevention': 'Ensure good air circulation, avoid overcrowding plants, water at the base of plants (not leaves), and plant in sunny locations.'
-        },
-        'bacterial_spot': {
-            'name': 'Bacterial Spot',
-            'description': 'Caused by Xanthomonas bacteria. Shows as small, dark brown to black spots with yellow halos on leaves. Can cause defoliation and reduce fruit quality.',
-            'treatment': 'Remove infected leaves. Apply copper-based bactericide. Avoid working with plants when wet. Improve drainage.',
-            'prevention': 'Use disease-free seeds, practice crop rotation, avoid overhead irrigation, sanitize tools, and remove plant debris.'
-        },
-        'fungal_leaf_spot': {
-            'name': 'Fungal Leaf Spot',
-            'description': 'General fungal infection causing circular or irregular spots on leaves. Spots may be brown, black, or tan with darker borders.',
-            'treatment': 'Remove affected leaves. Apply broad-spectrum fungicide. Reduce leaf wetness by avoiding overhead watering.',
-            'prevention': 'Ensure good air circulation, water early in the day, remove fallen leaves, practice crop rotation, and use disease-resistant varieties.'
-        },
-        'nutrient_deficiency': {
-            'name': 'Nutrient Deficiency',
-            'description': 'Yellowing leaves (chlorosis) may indicate nitrogen, iron, or other nutrient deficiencies. Can affect plant vigor and productivity.',
-            'treatment': 'Apply balanced fertilizer. For nitrogen deficiency, use high-nitrogen fertilizer. For iron deficiency, apply iron chelate. Test soil pH.',
-            'prevention': 'Regular soil testing, use balanced fertilizers, maintain proper soil pH (6.0-6.8 for most plants), and add organic matter to soil.'
+        'diseased': {
+            'name': 'Diseased Plant',
+            'description': 'The plant shows signs of disease, including discoloration, spots, or other abnormalities. Common causes include fungal infections, bacterial diseases, or nutrient deficiencies.',
+            'treatment': 'Remove affected leaves immediately. Apply appropriate fungicide or bactericide. Improve air circulation and reduce leaf wetness. Consult a local agricultural expert for specific treatment recommendations.',
+            'prevention': 'Practice crop rotation, avoid overhead watering, ensure proper plant spacing, remove plant debris, use disease-resistant varieties, and maintain proper soil nutrition and pH levels.'
         }
     }
     
@@ -143,61 +113,21 @@ class DiseaseAnalyzer:
         yellow_content = color_analysis['yellow_percentage']
         green_content = color_analysis['green_percentage']
         spot_count = spot_analysis['spot_count']
-        has_spots = spot_analysis['has_significant_spots']
-        texture_var = texture_analysis['texture_variance']
         
-        # Healthy plant detection - high green content, low brown/yellow, minimal spots
+        # Simple binary classification: Healthy or Diseased
+        # Healthy: high green content, low brown/yellow, minimal spots
         if health_score > 20 and green_content > 30 and brown_content < 6 and spot_count < 3:
             return 'healthy', random.uniform(85, 95), 'None'
         
-        # Late Blight - very high brown content and lots of spots (most severe)
-        if brown_content > 12 and spot_count > 7:
-            confidence = random.uniform(75, 88)
-            severity = 'High' if brown_content > 20 else 'Medium'
-            return 'late_blight', confidence, severity
-        
-        # Early Blight - moderate brown with significant spots (circular patterns)
-        if brown_content >= 7 and brown_content <= 12 and spot_count >= 5:
-            confidence = random.uniform(70, 85)
-            severity = 'Medium' if brown_content > 9 else 'Low'
-            return 'early_blight', confidence, severity
-        
-        # Nutrient Deficiency - high yellow, low brown (check before other diseases)
-        if yellow_content > 12 and brown_content < 7 and spot_count < 5:
-            confidence = random.uniform(68, 82)
-            severity = 'Medium' if yellow_content > 20 else 'Low'
-            return 'nutrient_deficiency', confidence, severity
-        
-        # Powdery Mildew - high texture variance with yellowing, minimal brown/spots
-        if texture_var > 400 and yellow_content > 8 and brown_content < 7 and spot_count < 5:
-            confidence = random.uniform(72, 85)
-            severity = 'Medium' if yellow_content > 15 else 'Low'
-            return 'powdery_mildew', confidence, severity
-        
-        # Bacterial Spot - primarily characterized by spots with some brown discoloration
-        if spot_count >= 4 and spot_count <= 7 and brown_content >= 4 and brown_content <= 9:
-            confidence = random.uniform(70, 84)
-            severity = 'Medium' if spot_count > 5 else 'Low'
-            return 'bacterial_spot', confidence, severity
-        
-        # Fungal Leaf Spot - general fungal infection (less severe than late/early blight)
-        if (spot_count >= 3 or brown_content >= 5) and brown_content < 7:
-            confidence = random.uniform(68, 81)
-            severity = 'Low'
-            return 'fungal_leaf_spot', confidence, severity
-        
-        # General unhealthy condition - catch any remaining unhealthy plants
-        if health_score < 10 or brown_content >= 3 or yellow_content > 8:
-            # Determine which disease pattern matches best
-            if brown_content > yellow_content:
-                confidence = random.uniform(65, 75)
-                severity = 'Low'
-                return 'early_blight', confidence, severity
+        # Diseased: any signs of disease
+        else:
+            confidence = random.uniform(70, 90)
+            # Determine severity based on symptoms
+            if brown_content > 12 or spot_count > 7:
+                severity = 'High'
+            elif brown_content >= 7 or spot_count >= 4 or yellow_content > 12:
+                severity = 'Medium'
             else:
-                confidence = random.uniform(65, 75)
                 severity = 'Low'
-                return 'nutrient_deficiency', confidence, severity
-        
-        # Default to healthy if no clear disease patterns detected
-        confidence = random.uniform(70, 82)
-        return 'healthy', confidence, 'None'
+            
+            return 'diseased', confidence, severity
