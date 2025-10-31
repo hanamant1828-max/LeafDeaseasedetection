@@ -36,6 +36,10 @@ db.init_app(app)
 # Ensure upload directory exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# Initialize disease analyzer once (cached for performance)
+disease_analyzer = DiseaseAnalyzer()
+app.logger.info('DiseaseAnalyzer initialized and ready')
+
 # Add cache control headers to prevent caching issues
 @app.after_request
 def add_header(response):
@@ -216,8 +220,7 @@ def upload_file():
         
         file.save(filepath)
         
-        analyzer = DiseaseAnalyzer()
-        result = analyzer.analyze_image(filepath)
+        result = disease_analyzer.analyze_image(filepath)
         
         analysis = Analysis(
             user_id=session['user_id'],

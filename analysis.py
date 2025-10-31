@@ -1,7 +1,9 @@
+import os
 import numpy as np
 from PIL import Image, ImageStat
-import random
+import logging
 
+logger = logging.getLogger(__name__)
 
 class DiseaseAnalyzer:
     
@@ -20,18 +22,44 @@ class DiseaseAnalyzer:
         }
     }
     
+    def __init__(self):
+        self.model = None
+        self.model_loaded = False
+        self._load_model()
+    
+    def _load_model(self):
+        try:
+            import tensorflow as tf
+            model_path = 'models/plant_disease_model.keras'
+            
+            if os.path.exists(model_path):
+                self.model = tf.keras.models.load_model(model_path)
+                self.model_loaded = True
+                logger.info(f"ML model loaded successfully from {model_path}")
+            else:
+                logger.warning(f"Model not found at {model_path}, using rule-based analysis")
+                self.model_loaded = False
+        except Exception as e:
+            logger.error(f"Failed to load ML model: {e}")
+            self.model_loaded = False
+    
     def analyze_image(self, image_path):
         try:
             img = Image.open(image_path)
             img = img.convert('RGB')
             
+            if self.model_loaded and self.model is not None:
+                disease, confidence, severity = self._ml_predict(img)
+            else:
+                color_analysis = self._analyze_colors(img)
+                spot_analysis = self._detect_spots(img)
+                texture_analysis = self._analyze_texture(img)
+                disease, confidence, severity = self._determine_disease(
+                    color_analysis, spot_analysis, texture_analysis
+                )
+            
             color_analysis = self._analyze_colors(img)
             spot_analysis = self._detect_spots(img)
-            texture_analysis = self._analyze_texture(img)
-            
-            disease, confidence, severity = self._determine_disease(
-                color_analysis, spot_analysis, texture_analysis
-            )
             
             disease_info = self.DISEASE_DATABASE.get(disease, self.DISEASE_DATABASE['healthy'])
             
@@ -48,11 +76,47 @@ class DiseaseAnalyzer:
                     'brown_content': color_analysis['brown_percentage'],
                     'yellow_content': color_analysis['yellow_percentage'],
                     'spots_detected': spot_analysis['spot_count'],
-                    'overall_health': color_analysis['health_score']
+                    'overall_health': color_analysis['health_score'],
+                    'ml_powered': self.model_loaded
                 }
             }
         except Exception as e:
+            logger.error(f"Image analysis failed: {e}")
             raise Exception(f"Image analysis failed: {str(e)}")
+    
+    def _ml_predict(self, img):
+        try:
+            import tensorflow as tf
+            
+            img_resized = img.resize((128, 128))
+            img_array = np.array(img_resized) / 255.0
+            img_array = np.expand_dims(img_array, axis=0)
+            
+            prediction = self.model.predict(img_array, verbose=0)[0][0]
+            
+            if prediction > 0.5:
+                disease = 'healthy'
+                confidence = float(prediction * 100)
+                severity = 'None'
+            else:
+                disease = 'diseased'
+                confidence = float((1 - prediction) * 100)
+                
+                if prediction < 0.2:
+                    severity = 'High'
+                elif prediction < 0.35:
+                    severity = 'Medium'
+                else:
+                    severity = 'Low'
+            
+            return disease, confidence, severity
+            
+        except Exception as e:
+            logger.error(f"ML prediction failed: {e}, falling back to rule-based")
+            color_analysis = self._analyze_colors(img)
+            spot_analysis = self._detect_spots(img)
+            texture_analysis = self._analyze_texture(img)
+            return self._determine_disease(color_analysis, spot_analysis, texture_analysis)
     
     def _analyze_colors(self, img):
         pixels = np.array(img)
@@ -63,17 +127,14 @@ class DiseaseAnalyzer:
         g = pixels[:, :, 1].flatten()
         b = pixels[:, :, 2].flatten()
         
-        # Improved green detection - more inclusive
         green_mask = (g > r) & (g > b) & (g > 50)
         green_pixels = np.sum(green_mask)
         green_percentage = (green_pixels / total_pixels) * 100
         
-        # Improved brown detection - catches disease discoloration better
         brown_mask = ((r > 80) & (r < 220) & (g > 40) & (g < 180) & (b < 120) & (r > b))
         brown_pixels = np.sum(brown_mask)
         brown_percentage = (brown_pixels / total_pixels) * 100
         
-        # Improved yellow detection - catches chlorosis
         yellow_mask = ((r > 120) & (g > 120) & (b < 120) & (r > b) & (g > b))
         yellow_pixels = np.sum(yellow_mask)
         yellow_percentage = (yellow_pixels / total_pixels) * 100
@@ -91,7 +152,6 @@ class DiseaseAnalyzer:
         img_gray = img.convert('L')
         pixels = np.array(img_gray)
         
-        # More sensitive spot detection
         threshold = np.mean(pixels) - (np.std(pixels) * 0.8)
         dark_spots = pixels < threshold
         
@@ -118,28 +178,21 @@ class DiseaseAnalyzer:
         green_content = color_analysis['green_percentage']
         spot_count = spot_analysis['spot_count']
         
-        # Calculate disease indicators
         discoloration_score = brown_content + (yellow_content * 0.7)
         
-        # More lenient and accurate classification
-        # Healthy criteria: predominantly green with minimal disease signs
         is_healthy = (
-            green_content > 15 and  # More lenient green threshold
-            discoloration_score < 15 and  # Combined discoloration threshold
-            spot_count < 8 and  # More tolerant of minor spots
-            health_score > 0  # Overall positive health score
+            green_content > 15 and
+            discoloration_score < 15 and
+            spot_count < 8 and
+            health_score > 0
         )
         
         if is_healthy:
-            # Calculate confidence based on how strongly healthy it appears
             confidence_base = min(95, 75 + (green_content / 2))
             confidence_penalty = (brown_content + yellow_content + spot_count) * 0.5
             confidence = max(70, confidence_base - confidence_penalty)
             return 'healthy', float(confidence), 'None'
-        
-        # Diseased classification
         else:
-            # Calculate confidence based on disease indicators
             confidence_base = 70
             if discoloration_score > 20:
                 confidence_base += 10
@@ -150,7 +203,6 @@ class DiseaseAnalyzer:
             
             confidence = min(95, confidence_base)
             
-            # Determine severity based on multiple factors
             severity_score = (brown_content * 1.5) + yellow_content + (spot_count * 0.8)
             
             if severity_score > 30 or green_content < 8:
