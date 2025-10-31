@@ -141,46 +141,57 @@ class DiseaseAnalyzer:
         health_score = color_analysis['health_score']
         brown_content = color_analysis['brown_percentage']
         yellow_content = color_analysis['yellow_percentage']
+        green_content = color_analysis['green_percentage']
         spot_count = spot_analysis['spot_count']
         has_spots = spot_analysis['has_significant_spots']
+        texture_var = texture_analysis['texture_variance']
         
-        if health_score > 30 and not has_spots:
+        # Healthy plant detection - high green content, low brown/yellow, minimal spots
+        if health_score > 25 and green_content > 40 and brown_content < 8 and spot_count < 5:
             return 'healthy', random.uniform(85, 95), 'None'
         
-        if brown_content > 15 and spot_count > 10:
-            if brown_content > 25:
-                confidence = random.uniform(75, 88)
-                severity = 'High' if brown_content > 35 else 'Medium'
-                return 'late_blight', confidence, severity
-            else:
-                confidence = random.uniform(70, 85)
-                severity = 'Medium' if spot_count > 15 else 'Low'
-                return 'early_blight', confidence, severity
+        # Late Blight - very high brown content, lots of spots, irregular patterns
+        if brown_content > 20 and spot_count > 12:
+            confidence = random.uniform(75, 88)
+            severity = 'High' if brown_content > 30 else 'Medium'
+            return 'late_blight', confidence, severity
         
-        if yellow_content > 20 and health_score < 10:
-            if brown_content < 10:
-                confidence = random.uniform(68, 82)
-                severity = 'Medium' if yellow_content > 30 else 'Low'
-                return 'nutrient_deficiency', confidence, severity
-            else:
-                confidence = random.uniform(72, 85)
-                severity = 'Medium'
-                return 'powdery_mildew', confidence, severity
+        # Early Blight - moderate brown content with spots, more uniform than late blight
+        if brown_content > 12 and brown_content <= 20 and spot_count > 8:
+            confidence = random.uniform(70, 85)
+            severity = 'Medium' if brown_content > 16 else 'Low'
+            return 'early_blight', confidence, severity
         
-        if has_spots and spot_count > 8:
-            if brown_content > 12:
-                confidence = random.uniform(70, 84)
-                severity = 'Medium' if spot_count > 12 else 'Low'
-                return 'bacterial_spot', confidence, severity
-            else:
-                confidence = random.uniform(68, 81)
-                severity = 'Low'
-                return 'fungal_leaf_spot', confidence, severity
+        # Nutrient Deficiency - high yellow, low brown, overall yellowing
+        if yellow_content > 18 and brown_content < 12 and health_score < 15:
+            confidence = random.uniform(68, 82)
+            severity = 'Medium' if yellow_content > 28 else 'Low'
+            return 'nutrient_deficiency', confidence, severity
         
-        if health_score < 20:
-            confidence = random.uniform(65, 78)
-            severity = 'Medium' if health_score < 10 else 'Low'
+        # Powdery Mildew - moderate yellow/white content with texture changes
+        if yellow_content > 15 and yellow_content <= 30 and texture_var > 400:
+            confidence = random.uniform(72, 85)
+            severity = 'Medium' if yellow_content > 22 else 'Low'
+            return 'powdery_mildew', confidence, severity
+        
+        # Bacterial Spot - distinct spots with brown halos
+        if has_spots and spot_count > 7 and brown_content > 10 and brown_content <= 18:
+            confidence = random.uniform(70, 84)
+            severity = 'Medium' if spot_count > 10 else 'Low'
+            return 'bacterial_spot', confidence, severity
+        
+        # Fungal Leaf Spot - spots present but less severe than bacterial
+        if has_spots and spot_count > 5 and brown_content > 5:
+            confidence = random.uniform(68, 81)
+            severity = 'Medium' if spot_count > 9 else 'Low'
             return 'fungal_leaf_spot', confidence, severity
         
-        confidence = random.uniform(60, 75)
+        # General disease indication - something wrong but not matching specific patterns
+        if health_score < 15 or brown_content > 8 or yellow_content > 12:
+            confidence = random.uniform(65, 78)
+            severity = 'Low'
+            return 'fungal_leaf_spot', confidence, severity
+        
+        # Default to healthy if no disease patterns detected
+        confidence = random.uniform(70, 82)
         return 'healthy', confidence, 'None'
