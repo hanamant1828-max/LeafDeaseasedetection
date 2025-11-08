@@ -1,0 +1,174 @@
+2025-11-08 17:16:50.780994: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+2025-11-08 17:16:50.782066: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-11-08 17:16:50.866706: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-11-08 17:16:56.896769: I tensorflow/core/util/port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-11-08 17:16:56.929324: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+2025-11-08 17:16:59.658720: E external/local_xla/xla/stream_executor/cuda/cuda_platform.cc:51] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: UNKNOWN ERROR (303)
+================================================================================
+COMPREHENSIVE IMAGE TESTING REPORT
+================================================================================
+
+
+================================================================================
+TESTING DISEASED IMAGES (Should detect as DISEASED)
+================================================================================
+1. early_blight_1.png
+   Result: Diseased Plant | Confidence: 100.0% | Severity: High
+   ML Model: True | Status: ✓ CORRECT
+
+2. fungal_spots_1.png
+   Result: Diseased Plant | Confidence: 100.0% | Severity: High
+   ML Model: True | Status: ✓ CORRECT
+
+3. fungal_spots_2.png
+   Result: Diseased Plant | Confidence: 100.0% | Severity: High
+   ML Model: True | Status: ✓ CORRECT
+
+4. late_blight_1.png
+   Result: Diseased Plant | Confidence: 100.0% | Severity: High
+   ML Model: True | Status: ✓ CORRECT
+
+5. powdery_mildew_1.png
+   Result: Diseased Plant | Confidence: 100.0% | Severity: High
+   ML Model: True | Status: ✓ CORRECT
+
+
+================================================================================
+TESTING HEALTHY IMAGES (Should detect as HEALTHY)
+================================================================================
+1. healthy_leaf_1.png
+   Result: Healthy Plant | Confidence: 100.0%
+   ML Model: True | Status: ✓ CORRECT
+
+2. healthy_leaf_2.png
+   Result: Healthy Plant | Confidence: 100.0%
+   ML Model: True | Status: ✓ CORRECT
+
+3. healthy_leaf_3.png
+   Result: Healthy Plant | Confidence: 100.0%
+   ML Model: True | Status: ✓ CORRECT
+
+
+================================================================================
+TESTING XYZ DIRECTORY IMAGES
+================================================================================
+1. diseased_plant_leave_199dde3b.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 100.0% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+2. diseased_plant_leave_3c47ab27.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 100.0% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+3. diseased_plant_leave_3d3d58f9.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 100.0% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+4. diseased_plant_leave_452217a5.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 99.7% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+5. diseased_plant_leave_64417ceb.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 99.4% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+6. diseased_plant_leave_73d14eb2.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 100.0% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+7. diseased_plant_leave_87b3b7c2.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 95.3% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+8. diseased_plant_leave_96d120f1.jpg
+   Expected: DISEASED | Detected: Diseased Plant
+   Confidence: 100.0% | Severity: High | ML: True
+   Status: ✓ CORRECT
+
+9. diseased_plant_leave_e073f745.jpg
+   Expected: DISEASED | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✗ WRONG
+
+10. diseased_plant_leave_e958da4b.jpg
+   Expected: DISEASED | Detected: Healthy Plant
+   Confidence: 93.0% | Severity: None | ML: True
+   Status: ✗ WRONG
+
+11. healthy_cucumber_pla_20491dcb.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+12. healthy_cucumber_pla_2efeae83.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+13. healthy_cucumber_pla_381ee0e1.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+14. healthy_cucumber_pla_461e97f7.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+15. healthy_cucumber_pla_5e600fce.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+16. healthy_cucumber_pla_7dc41592.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+17. healthy_cucumber_pla_88f7a915.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+18. healthy_cucumber_pla_a4350adc.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+19. healthy_cucumber_pla_dc0b5884.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+20. healthy_cucumber_pla_de7e5768.jpg
+   Expected: HEALTHY | Detected: Healthy Plant
+   Confidence: 100.0% | Severity: None | ML: True
+   Status: ✓ CORRECT
+
+
+================================================================================
+SUMMARY REPORT
+================================================================================
+
+DISEASED IMAGES:
+  Total: 5
+  Correct: 5 (100.0%)
+  Wrong: 0 (0.0%)
+
+HEALTHY IMAGES:
+  Total: 3
+  Correct: 3 (100.0%)
+  Wrong: 0 (0.0%)
+
+OVERALL ACCURACY:
+  8/8 = 100.0%
+
+================================================================================
