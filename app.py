@@ -272,6 +272,11 @@ def uploaded_file(filename):
     from flask import send_from_directory
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/presentation')
+def presentation():
+    """Display presentation slides."""
+    return render_template('presentation.html')
+
 @app.errorhandler(413)
 def too_large(e):
     """Handle file too large error."""
